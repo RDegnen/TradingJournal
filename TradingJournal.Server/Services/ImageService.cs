@@ -1,18 +1,17 @@
-﻿using Amazon;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Amazon.S3.Model;
 
 namespace TradingJournal.Server.Services;
 
 public class ImageService : IImageService
 {
-  private AmazonS3Client _s3Client;
+  private IAmazonS3 _s3Client;
   private readonly string _bucketName;
 
-  public ImageService(IConfiguration configuration)
+  public ImageService(IConfiguration configuration, IAmazonS3 amazonS3)
   {
-    _s3Client = new AmazonS3Client();
-    //_bucketName = configuration.GetSection("AWS").GetValue(string, "Bucket");
+    _s3Client = amazonS3;
+    _bucketName = configuration.GetSection("AWS").GetValue<string>("Bucket");
   }
 
   private List<Task<string>> createRequests(string[] imageKeys, HttpVerb verb)

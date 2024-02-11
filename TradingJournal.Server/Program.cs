@@ -1,5 +1,7 @@
+using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using TradingJournal.Server.Models;
+using TradingJournal.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,9 @@ builder.Services.AddDbContext<TradeContext>(options =>
   options.UseSqlite(builder.Configuration.GetConnectionString("TradingJournalDatabase")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddTransient<IImageService, ImageService>();
 
 var app = builder.Build();
 
