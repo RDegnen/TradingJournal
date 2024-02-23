@@ -5,7 +5,12 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.min.css'
 import { columnDefinitions } from './columnDefinitions'
 
-export default function DataGrid() {
+interface DataGridProps {
+  notesImagesColumnClickCallback: (data: Trade) => void
+}
+
+export default function DataGrid(props: DataGridProps) {
+  const { notesImagesColumnClickCallback } = props
   const gridRef = useRef<AgGridReact<Trade>>(null)
   const [trades, setTrades] = useState<Trade[]>();
  
@@ -19,16 +24,12 @@ export default function DataGrid() {
     populateTradeData();
   }, []);
 
-  function onNoteImageColumnClickCallback(data: Trade) {
-    console.log(data)
-  }
-
   return (
     <div className="ag-theme-material" style={{ height: '100vh', width: '100%' }}>
       <AgGridReact
         ref={gridRef}
         rowData={trades}
-        columnDefs={columnDefinitions(onNoteImageColumnClickCallback)}
+        columnDefs={columnDefinitions(notesImagesColumnClickCallback)}
         reactiveCustomComponents
       />
     </div>

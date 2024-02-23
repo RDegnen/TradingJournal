@@ -16,3 +16,18 @@ export default interface Trade {
   notes?: string
   imageLocations: string[]
 }
+
+export const defaultTrade: Trade = {
+  id: 0,
+  pair: '',
+  positionSize: 0,
+  direction: 0,
+  entryTime: '',
+  entry: 0,
+  stopLoss: 0,
+  takeProfit: 0,
+  riskReward: '',
+  riskPercent: 0,
+  exitTime: '',
+  imageLocations: []
+}
