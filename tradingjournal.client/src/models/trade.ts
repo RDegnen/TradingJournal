@@ -1,16 +1,16 @@
 export default interface Trade {
-  id: number
+  id?: number
   pair: string
-  positionSize: number
+  positionSize: string
   direction: number
   entryTime: string
-  entry: number
-  stopLoss: number
-  takeProfit: number
+  entry: string
+  stopLoss: string
+  takeProfit: string
   riskReward: string
   riskPercent: number
-  exitTime: string
-  exit?: number
+  exitTime?: string
+  exit?: string
   strategy?: string
   profitOrLoss?: number
   notes?: string
@@ -18,16 +18,14 @@ export default interface Trade {
 }
 
 export const defaultTrade: Trade = {
-  id: 0,
   pair: '',
-  positionSize: 0,
+  positionSize: '',
   direction: 0,
   entryTime: '',
-  entry: 0,
-  stopLoss: 0,
-  takeProfit: 0,
+  entry: '',
+  stopLoss: '',
+  takeProfit: '',
   riskReward: '',
   riskPercent: 0,
-  exitTime: '',
   imageLocations: []
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { AgGridReact, } from 'ag-grid-react'
 import Trade from '../../../../models/trade'
 import 'ag-grid-community/styles/ag-grid.css'
@@ -7,22 +7,12 @@ import { columnDefinitions } from './columnDefinitions'
 
 interface DataGridProps {
   notesImagesColumnClickCallback: (data: Trade) => void
+  trades: Trade[]
 }
 
 export default function DataGrid(props: DataGridProps) {
-  const { notesImagesColumnClickCallback } = props
+  const { notesImagesColumnClickCallback, trades } = props
   const gridRef = useRef<AgGridReact<Trade>>(null)
-  const [trades, setTrades] = useState<Trade[]>();
- 
-  async function populateTradeData() {
-    const response = await fetch('/api/Trades');
-    const data = await response.json();
-    setTrades(data);
-  }
-
-  useEffect(() => {
-    populateTradeData();
-  }, []);
 
   return (
     <div className="ag-theme-material" style={{ height: '100vh', width: '100%' }}>

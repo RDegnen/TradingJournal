@@ -10,7 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\models\" />
+    <Folder Include="src\utils\" />
     <Folder Include="src\pages\TradesPage\components\DataGrid\NotesAndImagesCellRenderer\" />
+    <Folder Include="src\pages\TradesPage\components\NewTradeModal\" />
     <Folder Include="src\pages\TradesPage\components\NotesAndImagesModal\ZoomableImage\" />
   </ItemGroup>
 </Project>
