@@ -1,7 +1,8 @@
 import { useEffect, useCallback, useState } from 'react'
-import { Grid, Box, ImageList } from "@mui/material";
-import Trade from "../../../../models/trade";
+import { Grid, Box, ImageList } from "@mui/material"
+import Trade from "../../../../models/trade"
 import ZoomableImageListItem from './ZoomableImage'
+import TextEditor from './TextEditor'
 
 interface NotesAndImagesModalProps {
   data: Trade
@@ -12,16 +13,16 @@ interface PreSignedUrlsResponseObject {
 }
 
 export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
-  const { notes, imageLocations } = props.data
+  const { notes, imageKeys } = props.data
   const [images, setImages] = useState<string[]>([])
 
   const getPreSignedUrls = useCallback(async () => {
-    const queries = imageLocations.map(key => ['imageKeys', key])
+    const queries = imageKeys.map(key => ['imageKeys', key])
     const params = new URLSearchParams(queries)
     const response = await fetch('/api/Images/GetReadPreSignedUrls?' + params)
     const preSignedURLs: PreSignedUrlsResponseObject[] = await response.json()
     return preSignedURLs
-  }, [imageLocations])
+  }, [imageKeys])
 
   const getImageData = useCallback(async (preSignedUrls: PreSignedUrlsResponseObject[]) => {
     const requests = preSignedUrls
@@ -54,7 +55,7 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
     }}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          {notes}
+          <TextEditor content={notes} />
         </Grid>
         <Grid item xs={6}>
           <ImageList cols={3}>

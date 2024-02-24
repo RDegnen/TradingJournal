@@ -23,7 +23,7 @@ public class Trade
   public string? Strategy { get; set; }
   public double? ProfitOrLoss { get; set; }
   public string? Notes { get; set; }
-  public string[]? ImageLocations { get; set; }
+  public string[]? ImageKeys { get; set; }
 
   public Trade(string pair, string riskReward)
   {

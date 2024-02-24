@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TradingJournal.Server.Models;
 
@@ -10,9 +11,11 @@ using TradingJournal.Server.Models;
 namespace TradingJournal.Server.Migrations
 {
     [DbContext(typeof(TradeContext))]
-    partial class TradeContextModelSnapshot : ModelSnapshot
+    [Migration("20240224014230_RenameImageLocations")]
+    partial class RenameImageLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");

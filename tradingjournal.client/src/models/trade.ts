@@ -14,7 +14,7 @@ export default interface Trade {
   strategy?: string
   profitOrLoss?: number
   notes?: string
-  imageLocations: string[]
+  imageKeys: string[]
 }
 
 export const defaultTrade: Trade = {
@@ -27,5 +27,5 @@ export const defaultTrade: Trade = {
   takeProfit: '',
   riskReward: '',
   riskPercent: 0,
-  imageLocations: []
+  imageKeys: []
 }

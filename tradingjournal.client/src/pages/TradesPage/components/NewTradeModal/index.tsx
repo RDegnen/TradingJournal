@@ -170,6 +170,17 @@ export default function NewTradesModal(props: NewTradesModalProps) {
           />
         </Grid>
         <Grid item xs={4}>
+          <TextField
+            required
+            sx={{ width: 300 }}
+            label="Strategy"
+            value={newTrade.strategy || ''}
+            onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+              setNewTrade(trade => ({ ...trade, strategy: event.target.value }))
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <Button type="submit">Create</Button>
         </Grid>
       </Grid>

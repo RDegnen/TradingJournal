@@ -17,6 +17,6 @@ export default function NotesAndImagesCellRenderer(
   }
 
   return (
-    <Button onClick={onClick} variant="contained">View</Button>
+    <Button onClick={onClick}>View</Button>
   )
 }
