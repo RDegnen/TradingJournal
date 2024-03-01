@@ -5,16 +5,17 @@ import BubbleMenu from './BubbleMenu'
 
 interface TextEditorProps {
   content: string
+  onNotesUpdate: (notes: string) => void
 }
 
 export default function TextEditor(props: TextEditorProps) {
-  const { content } = props
+  const { content, onNotesUpdate } = props
   const extensions = [
     StarterKit
   ]
 
   function onUpdate(event: EditorEvents['update']) {
-    console.log(event.editor)
+    onNotesUpdate(event.editor.getText())
   }
 
   return (

@@ -3,6 +3,7 @@ import { Grid, Box, ImageList } from "@mui/material"
 import Trade from "../../../../models/trade"
 import ZoomableImageListItem from './ZoomableImage'
 import TextEditor from './TextEditor'
+import useDebounce from '../../../../utils/useDebounce'
 
 interface NotesAndImagesModalProps {
   data: Trade
@@ -13,8 +14,11 @@ interface PreSignedUrlsResponseObject {
 }
 
 export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
-  const { notes, imageKeys } = props.data
+  const { data } = props
+  const { imageKeys } = data
   const [images, setImages] = useState<string[]>([])
+  const [notes, setNotes] = useState<string>(data.notes || '')
+  const [isSaving, setIsSaving] = useState<boolean>(false)
 
   const getPreSignedUrls = useCallback(async () => {
     const queries = imageKeys.map(key => ['imageKeys', key])
@@ -41,6 +45,32 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
     })
   }, [getPreSignedUrls, getImageData])
 
+  async function updateTradeNotes(notes: string) {
+    try {
+      console.log('running PUT')
+      setIsSaving(true)
+      await fetch(`/api/Trades/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ...data, notes })
+      })
+      setIsSaving(false)
+    } catch (error) {
+      setIsSaving(false)
+      console.log(error)
+    }
+  }
+
+  const debouncedUpdateTradeNotes = useDebounce(updateTradeNotes)
+
+  function onNotesUpdate(notes: string) {
+    setNotes(notes)
+    debouncedUpdateTradeNotes(notes)
+  }
+
+
   return (
     <Box sx={{
       position: 'absolute',
@@ -55,7 +85,7 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
     }}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <TextEditor content={notes} />
+          <TextEditor content={notes} onNotesUpdate={onNotesUpdate} />
         </Grid>
         <Grid item xs={6}>
           <ImageList cols={3}>
@@ -65,6 +95,9 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
               )
             })}
           </ImageList>
+        </Grid>
+        <Grid item>
+          {isSaving && "Saving notes..." }
         </Grid>
       </Grid>
     </Box>

@@ -1,9 +1,10 @@
 import { BubbleMenu as BubbleMenuBase, useCurrentEditor } from '@tiptap/react'
-import { Button as BaseButton, Box } from '@mui/material'
+import { Button as BaseButton, Box, Card } from '@mui/material'
 import { styled } from '@mui/system'
 
 const Button = styled(BaseButton)`
   color: black;
+  font-weight: bold;
 `
 
 export default function BubbleMenu() {
@@ -15,12 +16,7 @@ export default function BubbleMenu() {
 
   return (
     <BubbleMenuBase>
-      <Box
-        sx={{
-          bgcolor: 'background.paper',
-          border: '2px solid #000',
-        }}
-      >
+      <Card>
         <Button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
@@ -57,7 +53,7 @@ export default function BubbleMenu() {
         >
           h6
         </Button>
-      </Box>
+      </Card>
     </BubbleMenuBase>
   )
 }
