@@ -19,11 +19,12 @@ interface PreSignedUrlsResponseObject {
 
 export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
   const { data } = props
-  const { imageKeys } = data
   const [, dispatch] = useTrade()!
+  const [imageKeys, setImageKeys] = useState<string[]>(data.imageKeys)
   const [images, setImages] = useState<string[]>([])
   const [notes, setNotes] = useState<string>(data.notes || '')
   const [isSaving, setIsSaving] = useState<boolean>(false)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const getPreSignedUrls = useCallback(async () => {
     const queries = imageKeys.map(key => ['imageKeys', key])
@@ -65,7 +66,7 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
     debouncedOnTradeUpdate(notes)
   }
 
-  async function uploadImageAndUpdateTrade(
+  async function uploadImage(
     url: PreSignedUrlsResponseObject,
     fileMap: Map<string, File>
   ) {
@@ -76,11 +77,12 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
       },
       body: fileMap.get(url.fileName)
     })
-    await updateTrade({...data, imageKeys: [...imageKeys, url.fileName]}, dispatch)
   }
 
   async function onImageUpload(files: FileList) {
+    const successfulUploads: string[] = []
     try {
+      setIsUploading(true)
       const fileMap: Map<string, File> = new Map()
       for (let i = 0; i < files.length; i++) {
         const file = files.item(i)!
@@ -92,10 +94,18 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
       const preSignedUrls: PreSignedUrlsResponseObject[] = await response.json()
 
       for (const url of preSignedUrls) {
-        await uploadImageAndUpdateTrade(url, fileMap)
+        await uploadImage(url, fileMap)
+        successfulUploads.push(url.fileName)
       }
     } catch (error) {
       console.log(error)
+    } finally {
+      await updateTrade({
+        ...data,
+        imageKeys: [...imageKeys, ...successfulUploads]
+      }, dispatch)
+      setImageKeys(keys => [...keys, ...successfulUploads])
+      setIsUploading(false)
     }
   } 
 
@@ -129,6 +139,9 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
         </Grid>
         <Grid item>
           <ImageInput onUpload={onImageUpload} />
+        </Grid>
+        <Grid item>
+          {isUploading && "Uploading images..." }
         </Grid>
       </Grid>
     </Box>
