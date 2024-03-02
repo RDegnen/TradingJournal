@@ -14,9 +14,9 @@ public class ImageService : IImageService
     _bucketName = configuration.GetSection("AWS").GetValue<string>("Bucket");
   }
 
-  private List<Task<string>> createRequests(string[] imageKeys, HttpVerb verb)
+  private async Task<Dictionary<string, string>> createRequests(string[] imageKeys, HttpVerb verb)
   {
-    var requests = new List<Task<string>>();
+    var dict = new Dictionary<string, string>();
     foreach (var key in imageKeys)
     {
       var request = _s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest
@@ -24,22 +24,22 @@ public class ImageService : IImageService
         BucketName = _bucketName,
         Key = key,
         Verb = verb,
-        Expires = DateTime.Now.AddDays(1)
+        Expires = DateTime.Now.AddDays(1),
+        ContentType = "image/png"
       });
-      requests.Add(request);
+      var preSignedUrl = await request;
+      dict.Add(key, preSignedUrl);
     }
-    return requests;
+    return dict;
   }
 
-  public async Task<string[]> GetUploadPreSignedUrls(string[] imageKeys)
+  public async Task<Dictionary<string, string>> GetUploadPreSignedUrls(string[] imageKeys)
   {
-    var requests = createRequests(imageKeys, HttpVerb.PUT);
-    return await Task.WhenAll(requests);
+    return await createRequests(imageKeys, HttpVerb.PUT);
   }
 
-  public async Task<string[]> GetReadPreSignedUrls(string[] imageKeys)
+  public async Task<Dictionary<string, string>> GetReadPreSignedUrls(string[] imageKeys)
   {
-    var requests = createRequests(imageKeys, HttpVerb.GET);
-    return await Task.WhenAll(requests);
+    return await createRequests(imageKeys, HttpVerb.GET);
   }
 }

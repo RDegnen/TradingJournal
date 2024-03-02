@@ -20,7 +20,7 @@ namespace TradingJournal.Server.Controllers
     public async Task<ActionResult<IEnumerable<ImageDTO>>> GetUploadPreSignedUrls([FromQuery] string[] imageKeys)
     {
       var urls = await _imageService.GetUploadPreSignedUrls(imageKeys);
-      var dtos = urls.Select(url => new ImageDTO(url));
+      var dtos = urls.Select(url => new ImageDTO(url.Key, url.Value));
       return Ok(dtos);
     }
 
@@ -28,7 +28,7 @@ namespace TradingJournal.Server.Controllers
     public async Task<ActionResult<IEnumerable<ImageDTO>>> GetReadPreSignedUrls([FromQuery] string[] imageKeys)
     {
       var urls = await _imageService.GetReadPreSignedUrls(imageKeys);
-      var dtos = urls.Select(url => new ImageDTO(url));
+      var dtos = urls.Select(url => new ImageDTO(url.Key, url.Value));
       return Ok(dtos);
     }
   }

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\models\" />
+    <Folder Include="src\pages\TradesPage\components\NotesAndImagesModal\ImageInput\" />
     <Folder Include="src\pages\TradesPage\components\NotesAndImagesModal\TextEditor\MenuBar\" />
     <Folder Include="src\pages\TradesPage\components\NotesAndImagesModal\TextEditor\BubbleMenu\" />
     <Folder Include="src\utils\" />

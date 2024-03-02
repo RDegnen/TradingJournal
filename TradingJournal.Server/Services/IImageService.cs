@@ -2,7 +2,7 @@
 
 public interface IImageService
 {
-  Task<string[]> GetUploadPreSignedUrls(string[] imageKeys);
+  Task<Dictionary<string, string>> GetUploadPreSignedUrls(string[] imageKeys);
 
-  Task<string[]> GetReadPreSignedUrls(string[] imageKeys);
+  Task<Dictionary<string, string>> GetReadPreSignedUrls(string[] imageKeys);
 }
