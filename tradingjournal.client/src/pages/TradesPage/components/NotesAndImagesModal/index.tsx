@@ -5,6 +5,8 @@ import ZoomableImageListItem from './ZoomableImage'
 import TextEditor from './TextEditor'
 import useDebounce from '../../../../utils/useDebounce'
 import ImageInput from './ImageInput'
+import useTrade from '../../context/useTrade'
+import { updateTrade } from '../../actions'
 
 interface NotesAndImagesModalProps {
   data: Trade
@@ -18,6 +20,7 @@ interface PreSignedUrlsResponseObject {
 export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
   const { data } = props
   const { imageKeys } = data
+  const [, dispatch] = useTrade()!
   const [images, setImages] = useState<string[]>([])
   const [notes, setNotes] = useState<string>(data.notes || '')
   const [isSaving, setIsSaving] = useState<boolean>(false)
@@ -51,77 +54,49 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
     })
   }, [getPreSignedUrls, getImageData])
 
-  async function updateTradeNotes(notes: string) {
-    try {
-      setIsSaving(true)
-      await fetch(`/api/Trades/${data.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ...data, notes })
-      })
-      setIsSaving(false)
-    } catch (error) {
-      setIsSaving(false)
-      console.log(error)
-    }
-  }
-
-  const debouncedUpdateTradeNotes = useDebounce(updateTradeNotes)
+  const debouncedOnTradeUpdate = useDebounce(async (notes: string) => {
+    setIsSaving(true)
+    await updateTrade({ ...data, notes }, dispatch)
+    setIsSaving(false)
+  })
 
   function onNotesUpdate(notes: string) {
     setNotes(notes)
-    debouncedUpdateTradeNotes(notes)
+    debouncedOnTradeUpdate(notes)
   }
 
-  async function updateTradeImageKeys(keys: string[]) {
-    try {
-      setIsSaving(true)
-      await fetch(`/api/Trades/${data.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ...data, imageKeys: [...imageKeys, ...keys] })
-      })
-      setIsSaving(false)
-    } catch (error) {
-      setIsSaving(false)
-      console.log(error)
-    }
+  async function uploadImageAndUpdateTrade(
+    url: PreSignedUrlsResponseObject,
+    fileMap: Map<string, File>
+  ) {
+    await fetch(url.preSignedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'image/png'
+      },
+      body: fileMap.get(url.fileName)
+    })
+    await updateTrade({...data, imageKeys: [...imageKeys, url.fileName]}, dispatch)
   }
 
   async function onImageUpload(files: FileList) {
-    const fileMap: Map<string, File> = new Map()
-    for (let i = 0; i < files.length; i++) {
-      const file = files.item(i)!
-      fileMap.set(file.name, file)
-    }
-    const imageKeys = Array.from(fileMap.keys()).map(name => ['imageKeys', name!])
-    const params = new URLSearchParams(imageKeys)
-    const response = await fetch(`/api/Images/GetUploadPreSignedUrls?${params}`)
-    const preSignedUrls: PreSignedUrlsResponseObject[] = await response.json()
+    try {
+      const fileMap: Map<string, File> = new Map()
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i)!
+        fileMap.set(file.name, file)
+      }
+      const newKeys = Array.from(fileMap.keys()).map(name => ['imageKeys', name!])
+      const params = new URLSearchParams(newKeys)
+      const response = await fetch(`/api/Images/GetUploadPreSignedUrls?${params}`)
+      const preSignedUrls: PreSignedUrlsResponseObject[] = await response.json()
 
-    const putRequests = []
-    for (const url of preSignedUrls) {
-      const request = fetch(url.preSignedUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'image/png'
-        },
-        body: fileMap.get(url.fileName)
-      })
-      putRequests.push(request)
+      for (const url of preSignedUrls) {
+        await uploadImageAndUpdateTrade(url, fileMap)
+      }
+    } catch (error) {
+      console.log(error)
     }
-
-    Promise.all(putRequests)
-      .then(() => {
-        updateTradeImageKeys(Array.from(fileMap.keys()))
-      })
-      .catch(err => {
-        console.log(err)
-      }) 
   } 
 
   return (
