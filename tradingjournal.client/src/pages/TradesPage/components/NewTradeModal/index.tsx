@@ -14,32 +14,19 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers'
 import { pairs, directions } from '../../../../utils/constants'
 import Trade, { defaultTrade } from '../../../../models/trade'
+import useTrade from '../../context/useTrade'
+import { addTrade } from '../../actions'
 
-interface NewTradesModalProps {
-  onSubmitCallback: () => void
-}
-
-export default function NewTradesModal(props: NewTradesModalProps) {
-  const { onSubmitCallback } = props
+export default function NewTradesModal() {
+  const [, dispatch] = useTrade()!
   const [newTrade, setNewTrade] = useState<Trade>(defaultTrade)
   const pairOptions = Object.values(pairs)
-
-  async function createTrade() {
-    const result = await fetch('/api/Trades', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newTrade)
-    })
-    return result
-  }
 
   async function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     try {
-      await createTrade()
-      onSubmitCallback()
+      await addTrade(newTrade, dispatch)
+      setNewTrade(defaultTrade)
     } catch (error) {
       console.log(error)
     }

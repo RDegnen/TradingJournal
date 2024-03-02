@@ -4,22 +4,19 @@ import DataGrid from './components/DataGrid'
 import Trade, { defaultTrade } from '../../models/trade'
 import NotesAndImagesModal from './components/NotesAndImagesModal'
 import NewTradesModal from './components/NewTradeModal'
+import TradeProvider from './context/TradeProvider'
+import useTrade from './context/useTrade'
+import { getTrades } from './actions'
 
-export default function TradesPage() {
+function TradesPage() {
+  const [, dispatch] = useTrade()!
   const [notesImagesModalOpen, setNotesImagesModalOpen] = useState(false)
   const [notesImagesModalData, setNotesImagesModalData] = useState<Trade>(defaultTrade)
   const [newTradeModalOpen, setNewTradeModalOpen] = useState(false)
-  const [trades, setTrades] = useState<Trade[]>([])
-
-  async function getTrades() {
-    const response = await fetch('/api/Trades');
-    const data = await response.json();
-    setTrades(data);
-  }
 
   useEffect(() => {
-    getTrades();
-  }, []);
+    getTrades(dispatch);
+  }, [dispatch]);
 
   function notesImagesColumnClickCallback(data: Trade) {
     setNotesImagesModalOpen(true)
@@ -36,7 +33,6 @@ export default function TradesPage() {
       <Button onClick={() => setNewTradeModalOpen(true)}>Add Trade</Button>
       <DataGrid
         notesImagesColumnClickCallback={notesImagesColumnClickCallback}
-        trades={trades}
       />
       <Modal
         open={notesImagesModalOpen}
@@ -48,8 +44,16 @@ export default function TradesPage() {
         open={newTradeModalOpen}
         onClose={() => setNewTradeModalOpen(false)}
       >
-        <NewTradesModal onSubmitCallback={getTrades} />
+        <NewTradesModal />
       </Modal>
     </>
+  )
+}
+
+export default function ProviderWrapper() {
+  return (
+    <TradeProvider>
+      <TradesPage />
+    </TradeProvider>
   )
 }
