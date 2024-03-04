@@ -1,7 +1,14 @@
-import { ColDef, ValueFormatterLiteParams } from 'ag-grid-community'
+import { ColDef, SuppressKeyboardEventParams, ValueFormatterLiteParams } from 'ag-grid-community'
 import Trade from '../../../../models/trade'
 import { CustomCellRendererProps } from 'ag-grid-react'
 import NotesAndImagesCellRenderer from './NotesAndImagesCellRenderer'
+import PriceColumnEditor from './PriceColumnEditor'
+import DateColumnEditor from './DateColumnEditor'
+
+function suppressKeyboardEventCallback(params: SuppressKeyboardEventParams) {
+  if (params.event.key === 'Enter') return true
+  return false
+}
 
 export const columnDefinitions = (
   notesAndImagesCallback: (data: Trade) => void
@@ -58,11 +65,19 @@ export const columnDefinitions = (
     },
     {
       field: 'exitTime',
-      headerName: 'Exit Time'
+      headerName: 'Exit Time',
+      editable: true,
+      cellEditor: DateColumnEditor,
+      suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
+        suppressKeyboardEventCallback(params)
     },
     {
       field: 'exit',
       headerName: 'Exit',
+      editable: true,
+      cellEditor: PriceColumnEditor,
+      suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
+        suppressKeyboardEventCallback(params)
     },
     {
       headerName: 'Notes & Images',
