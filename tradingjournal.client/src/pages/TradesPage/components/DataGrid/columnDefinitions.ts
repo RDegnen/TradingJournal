@@ -1,9 +1,10 @@
 import { ColDef, SuppressKeyboardEventParams, ValueFormatterLiteParams } from 'ag-grid-community'
 import Trade from '../../../../models/trade'
-import { CustomCellRendererProps } from 'ag-grid-react'
+import { CustomCellEditorProps, CustomCellRendererProps } from 'ag-grid-react'
 import NotesAndImagesCellRenderer from './NotesAndImagesCellRenderer'
 import PriceColumnEditor from './PriceColumnEditor'
 import DateColumnEditor from './DateColumnEditor'
+import { formatValue } from '../../../../components/PriceInput/utils'
 
 function suppressKeyboardEventCallback(params: SuppressKeyboardEventParams) {
   if (params.event.key === 'Enter') return true
@@ -19,7 +20,9 @@ export const columnDefinitions = (
     },
     {
       field: 'positionSize',
-      headerName: 'Position Size'
+      headerName: 'Position Size',
+      valueFormatter: (params: ValueFormatterLiteParams<Trade, number>) =>
+        formatValue({ value: params.value, includeSeparator: true })
     },
     {
       field: 'direction',
@@ -75,7 +78,9 @@ export const columnDefinitions = (
       field: 'exit',
       headerName: 'Exit',
       editable: true,
-      cellEditor: PriceColumnEditor,
+      cellEditor: (props: CustomCellEditorProps) => PriceColumnEditor({
+        cellEditorProps: props
+      }),
       cellDataType: 'text',
       suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
         suppressKeyboardEventCallback(params)
@@ -89,9 +94,13 @@ export const columnDefinitions = (
       field: 'profitOrLoss',
       headerName: 'Profit/Loss',
       editable: true,
-      cellEditor: PriceColumnEditor,
+      cellEditor: (props: CustomCellEditorProps) => PriceColumnEditor({
+        cellEditorProps: props, inputProps: { prefix: '$', includeSeparator: true }
+      }),
       cellDataType: 'text',
       suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
-        suppressKeyboardEventCallback(params)
+        suppressKeyboardEventCallback(params),
+      valueFormatter: (params: ValueFormatterLiteParams<Trade, number>) =>
+        formatValue({ value: params.value, prefix: '$', includeSeparator: true })
     }
   ]

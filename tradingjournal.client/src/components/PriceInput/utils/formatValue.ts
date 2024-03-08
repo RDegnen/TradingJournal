@@ -1,5 +1,5 @@
 export interface FormatValueOptions {
-  value: string | number
+  value: string | number | undefined | null
   prefix?: string
   includeSeparator: boolean
 }
@@ -22,7 +22,7 @@ export function formatValue(options: FormatValueOptions) {
     prefix,
     includeSeparator
   } = options
-  let formattedValue = value.toString()
+  let formattedValue = value?.toString()
   if (!formattedValue) return ''
 
   if (includeSeparator) formattedValue = formatSeparator(formattedValue)

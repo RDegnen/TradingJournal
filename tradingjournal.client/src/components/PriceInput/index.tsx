@@ -2,7 +2,7 @@ import { ChangeEvent, KeyboardEvent, forwardRef, useState, useEffect } from 'rea
 import { Input } from '@mui/material'
 import { formatValue, normalizeValue } from './utils'
 
-interface PriceInputProps {
+export interface PriceInputProps {
   value?: number | string
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
   onKeyDown?: (event: KeyboardEvent) => void
@@ -20,7 +20,7 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>((props, ref) =>
     prefix,
     includeSeparator = false
   } = props
-  const [stateValue, setStateValue] = useState(() => userValue ? userValue.toString() : '')
+  const [stateValue, setStateValue] = useState('')
 
   useEffect(() => {
     if (!userValue) {
