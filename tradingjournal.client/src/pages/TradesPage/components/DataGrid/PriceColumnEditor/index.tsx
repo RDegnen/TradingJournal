@@ -1,8 +1,8 @@
-import { ChangeEvent, KeyboardEvent } from 'react'
+import { KeyboardEvent } from 'react'
 import { CustomCellEditorProps } from "ag-grid-react"
-import { TextField } from '@mui/material'
 import useTrade from "../../../context/useTrade"
 import { updateTrade } from '../../../actions'
+import PriceInput from '../../../../../components/PriceInput'
 
 export default function PriceColumnEditor(props: CustomCellEditorProps) {
   const { value, onValueChange, data, colDef, stopEditing } = props
@@ -14,12 +14,14 @@ export default function PriceColumnEditor(props: CustomCellEditorProps) {
       stopEditing()
     } 
   }
-
+  
   return (
-    <TextField
-      value={value || ''}
-      onChange={(event: ChangeEvent<HTMLTextAreaElement>) => onValueChange(event.target.value)}
+    <PriceInput
+      value={value}
+      onValueChange={(value, formattedValue) => onValueChange(value)}
       onKeyDown={onKeyDown}
+      prefix={'$'}
+      includeSeparator={true}
     />
   )
 }

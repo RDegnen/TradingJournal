@@ -9,6 +9,7 @@
     <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\components\PriceInput\utils\" />
     <Folder Include="src\models\" />
     <Folder Include="src\pages\TradesPage\components\DataGrid\DateColumnEditor\" />
     <Folder Include="src\pages\TradesPage\components\DataGrid\PriceColumnEditor\" />

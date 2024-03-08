@@ -76,6 +76,7 @@ export const columnDefinitions = (
       headerName: 'Exit',
       editable: true,
       cellEditor: PriceColumnEditor,
+      cellDataType: 'text',
       suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
         suppressKeyboardEventCallback(params)
     },
@@ -83,5 +84,14 @@ export const columnDefinitions = (
       headerName: 'Notes & Images',
       cellRenderer: (props: CustomCellRendererProps<Trade>) =>
         NotesAndImagesCellRenderer({ customCellRendererProps: props, onClickCallback: notesAndImagesCallback })
+    },
+    {
+      field: 'profitOrLoss',
+      headerName: 'Profit/Loss',
+      editable: true,
+      cellEditor: PriceColumnEditor,
+      cellDataType: 'text',
+      suppressKeyboardEvent: (params: SuppressKeyboardEventParams) =>
+        suppressKeyboardEventCallback(params)
     }
   ]
