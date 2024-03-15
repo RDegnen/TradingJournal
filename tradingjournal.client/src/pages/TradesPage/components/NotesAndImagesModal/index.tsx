@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from 'react'
 import { Grid, Box, ImageList } from "@mui/material"
-import Trade from "../../../../models/trade"
+import Trade, { defaultTrade } from "../../../../models/trade"
 import ZoomableImageListItem from './ZoomableImage'
 import TextEditor from './TextEditor'
 import useDebounce from '../../../../utils/useDebounce'
@@ -17,15 +17,20 @@ interface PreSignedUrlsResponseObject {
   preSignedUrl: string
 }
 
+const getCurrentTrade = (trades: Trade[], id: number) =>
+  trades.find(trade => trade.id === id)
+
 export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
   const { data } = props
-  const [, dispatch] = useTrade()!
+  const [{ trades }, dispatch] = useTrade()!
+  // data does not seem to update when a trade does so this is necessary
+  const currentTrade = getCurrentTrade(trades, data.id!) || defaultTrade
   const [imageKeys, setImageKeys] = useState<string[]>(data.imageKeys)
   const [images, setImages] = useState<string[]>([])
   const [notes, setNotes] = useState<string>(data.notes || '')
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
-
+  
   const getPreSignedUrls = useCallback(async () => {
     const queries = imageKeys.map(key => ['imageKeys', key])
     const params = new URLSearchParams(queries)
@@ -57,7 +62,7 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
 
   const debouncedOnTradeUpdate = useDebounce(async (notes: string) => {
     setIsSaving(true)
-    await updateTrade({ ...data, notes }, dispatch)
+    await updateTrade({ ...currentTrade, notes }, dispatch)
     setIsSaving(false)
   })
 
@@ -101,7 +106,7 @@ export default function NotesAndImagesModal(props: NotesAndImagesModalProps) {
       console.log(error)
     } finally {
       await updateTrade({
-        ...data,
+        ...currentTrade,
         imageKeys: [...imageKeys, ...successfulUploads]
       }, dispatch)
       setImageKeys(keys => [...keys, ...successfulUploads])

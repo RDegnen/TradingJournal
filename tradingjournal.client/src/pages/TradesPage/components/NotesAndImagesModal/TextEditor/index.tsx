@@ -15,7 +15,7 @@ export default function TextEditor(props: TextEditorProps) {
   ]
 
   function onUpdate(event: EditorEvents['update']) {
-    onNotesUpdate(event.editor.getText())
+    onNotesUpdate(event.editor.getHTML())
   }
 
   return (

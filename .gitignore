@@ -363,7 +363,12 @@ MigrationBackup/
 FodyWeavers.xsd
 
 TradingJournal.Server/appsettings.json
+TradingJournal.Server/appsettings.Production.json
 
 TradingJournal.Server/TradingJournal.db
 TradingJournal.Server/TradingJournal.db-shm
 TradingJournal.Server/TradingJournal.db-wal
+
+TradingJournal.Server/TradingJournal.Production.db
+TradingJournal.Server/TradingJournal.Production.db-shm
+TradingJournal.Server/TradingJournal.Production.db-wal
